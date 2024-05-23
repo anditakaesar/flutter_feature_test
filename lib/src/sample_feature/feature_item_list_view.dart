@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:feature_test/src/constants/route_names.dart';
+import 'package:feature_test/src/sample_feature/hello_world_travel.dart';
+import 'package:feature_test/src/sample_feature/unit_converter_calculator.dart';
 
 import '../settings/settings_view.dart';
-import 'sample_item.dart';
+import 'feature_item.dart';
 import 'sample_item_details_view.dart';
 
 /// Displays a list of SampleItems.
-class SampleItemListView extends StatelessWidget {
-  const SampleItemListView({
+class FeatureItemListView extends StatelessWidget {
+  static const String defaultSampleRouteName = 'defaultSampleItem';
+  const FeatureItemListView({
     super.key,
-    this.items = const [SampleItem(1), SampleItem(2), SampleItem(3)],
+    this.items = const [
+      FeatureItem('Sample Feature', defaultSampleRouteName),
+      FeatureItem(HelloWorldTravel.title, RouteNames.helloWorldTravelRoute),
+      FeatureItem(UnitConverterCalculator.title, RouteNames.unitCalculatorRoute)
+    ],
   });
 
   static const routeName = '/';
 
-  final List<SampleItem> items;
+  final List<FeatureItem> items;
 
   @override
   Widget build(BuildContext context) {
@@ -43,29 +51,36 @@ class SampleItemListView extends StatelessWidget {
         // Providing a restorationId allows the ListView to restore the
         // scroll position when a user leaves and returns to the app after it
         // has been killed while running in the background.
-        restorationId: 'sampleItemListView',
+        restorationId: 'featureItemListView',
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) {
           final item = items[index];
 
           return ListTile(
-            title: Text('SampleItem ${item.id}'),
-            leading: const CircleAvatar(
-              // Display the Flutter Logo image asset.
-              foregroundImage: AssetImage('assets/images/flutter_logo.png'),
-            ),
-            onTap: () {
-              // Navigate to the details page. If the user leaves and returns to
-              // the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(
-                context,
-                SampleItemDetailsView.routeName,
-              );
-            }
-          );
+              title: Text(item.title),
+              leading: const CircleAvatar(
+                // Display the Flutter Logo image asset.
+                foregroundImage: AssetImage('assets/images/flutter_logo.png'),
+              ),
+              onTap: () {
+                // Navigate to the details page. If the user leaves and returns to
+                // the app after it has been killed while running in the
+                // background, the navigation stack is restored.
+                Navigator.restorablePushNamed(
+                  context,
+                  getRouteName(item),
+                );
+              });
         },
       ),
     );
+  }
+
+  String getRouteName(FeatureItem featureItem) {
+    if (featureItem.pageName == defaultSampleRouteName) {
+      return SampleItemDetailsView.routeName;
+    }
+
+    return featureItem.pageName;
   }
 }
